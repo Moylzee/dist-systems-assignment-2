@@ -258,7 +258,11 @@ public class MapReduceFiles {
   public static void map(String file, String contents, List<MappedItem> mappedItems) {
     String[] words = contents.trim().split("\\s+");
     for(String word: words) {
-      mappedItems.add(new MappedItem(word, file));
+      // Remove punctuation and non-text symbols
+      String cleanedWord = word.replaceAll("[^a-zA-Z]", "");
+      if (!cleanedWord.isEmpty()) {
+        mappedItems.add(new MappedItem(cleanedWord, file));
+      }
     }
   }
 
@@ -284,7 +288,11 @@ public class MapReduceFiles {
     String[] words = contents.trim().split("\\s+");
     List<MappedItem> results = new ArrayList<MappedItem>(words.length);
     for(String word: words) {
-      results.add(new MappedItem(word, file));
+      // Remove punctuation and non-text symbols
+      String cleanedWord = word.replaceAll("[^a-zA-Z]", "");
+      if (!cleanedWord.isEmpty()) {
+        results.add(new MappedItem(cleanedWord, file));
+      }
     }
     callback.mapDone(file, results);
   }

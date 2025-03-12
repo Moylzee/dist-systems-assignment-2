@@ -9,3 +9,212 @@ Distributed Reduce Time: 5982 ms
 Distributed Total Time: 6249 ms
 Total Execution Time: 12389 ms
 ------------------------------
+File Read Time: 319 ms
+Brute Force Time: 530 ms
+Map Time: 1468 ms
+Group Time: 152 ms
+Reduce Time: 156 ms
+Distributed Map Time: 78 ms
+Distributed Group Time: 124 ms
+Distributed Reduce Time: 6381 ms
+Distributed Total Time: 6585 ms
+Total Execution Time: 12947 ms
+------------------------------
+File Read Time: 360 ms
+Brute Force Time: 486 ms
+Map Time: 1397 ms
+Group Time: 221 ms
+Reduce Time: 299 ms
+Distributed Map Time: 245 ms
+Distributed Group Time: 172 ms
+Distributed Reduce Time: 5844 ms
+Distributed Total Time: 6261 ms
+Total Execution Time: 13025 ms
+------------------------------
+File Read Time: 14 ms
+Brute Force Time: 1 ms
+Map Time: 1 ms
+Group Time: 1 ms
+Reduce Time: 0 ms
+Distributed Map Time: 1 ms
+Distributed Group Time: 0 ms
+Distributed Reduce Time: 1 ms
+Distributed Total Time: 2 ms
+Total Execution Time: 21 ms
+------------------------------
+File Read Time: 17 ms
+Brute Force Time: 1 ms
+Map Time: 1 ms
+Group Time: 0 ms
+Reduce Time: 0 ms
+Distributed Map Time: 0 ms
+Distributed Group Time: 0 ms
+Distributed Reduce Time: 0 ms
+Distributed Total Time: 2 ms
+Total Execution Time: 24 ms
+------------------------------
+File Read Time: 16 ms
+Brute Force Time: 1 ms
+Map Time: 1 ms
+Group Time: 0 ms
+Reduce Time: 0 ms
+Distributed Map Time: 1 ms
+Distributed Group Time: 0 ms
+Distributed Reduce Time: 1 ms
+Distributed Total Time: 2 ms
+Total Execution Time: 24 ms
+------------------------------
+File Read Time: 14 ms
+Brute Force Time: 0 ms
+Map Time: 1 ms
+Group Time: 0 ms
+Reduce Time: 0 ms
+Distributed Map Time: 1 ms
+Distributed Group Time: 0 ms
+Distributed Reduce Time: 1 ms
+Distributed Total Time: 2 ms
+Total Execution Time: 21 ms
+------------------------------
+File Read Time: 22 ms
+Brute Force Time: 0 ms
+Map Time: 1 ms
+Group Time: 0 ms
+Reduce Time: 0 ms
+Distributed Map Time: 1 ms
+Distributed Group Time: 0 ms
+Distributed Reduce Time: 1 ms
+Distributed Total Time: 2 ms
+Total Execution Time: 31 ms
+------------------------------
+File Read Time: 14 ms
+Brute Force Time: 1 ms
+Map Time: 1 ms
+Group Time: 0 ms
+Reduce Time: 0 ms
+Distributed Map Time: 1 ms
+Distributed Group Time: 0 ms
+Distributed Reduce Time: 1 ms
+Distributed Total Time: 2 ms
+Total Execution Time: 21 ms
+------------------------------
+File Read Time: 16 ms
+Brute Force Time: 0 ms
+Map Time: 0 ms
+Group Time: 1 ms
+Reduce Time: 0 ms
+Distributed Map Time: 4 ms
+Distributed Group Time: 0 ms
+Distributed Reduce Time: 1 ms
+Distributed Total Time: 5 ms
+Total Execution Time: 27 ms
+------------------------------
+File Read Time: 14 ms
+Brute Force Time: 0 ms
+Map Time: 0 ms
+Group Time: 0 ms
+Reduce Time: 0 ms
+Distributed Map Time: 1 ms
+Distributed Group Time: 0 ms
+Distributed Reduce Time: 1 ms
+Distributed Total Time: 2 ms
+Total Execution Time: 20 ms
+------------------------------
+File Read Time: 13 ms
+Brute Force Time: 0 ms
+Map Time: 0 ms
+Group Time: 0 ms
+Reduce Time: 0 ms
+Distributed Map Time: 1 ms
+Distributed Group Time: 0 ms
+Distributed Reduce Time: 0 ms
+Distributed Total Time: 2 ms
+Total Execution Time: 20 ms
+------------------------------
+File Read Time: 12 ms
+Brute Force Time: 0 ms
+Map Time: 2 ms
+Group Time: 1 ms
+Reduce Time: 0 ms
+Distributed Map Time: 1 ms
+Distributed Group Time: 0 ms
+Distributed Reduce Time: 1 ms
+Distributed Total Time: 2 ms
+Total Execution Time: 21 ms
+------------------------------
+File Read Time: 13 ms
+Brute Force Time: 0 ms
+Map Time: 1 ms
+Group Time: 0 ms
+Reduce Time: 0 ms
+Distributed Map Time: 1 ms
+Distributed Group Time: 0 ms
+Distributed Reduce Time: 1 ms
+Distributed Total Time: 3 ms
+Total Execution Time: 22 ms
+------------------------------
+File Read Time: 14 ms
+Brute Force Time: 0 ms
+Map Time: 1 ms
+Group Time: 0 ms
+Reduce Time: 0 ms
+Distributed Map Time: 2 ms
+Distributed Group Time: 0 ms
+Distributed Reduce Time: 0 ms
+Distributed Total Time: 2 ms
+Total Execution Time: 21 ms
+------------------------------
+File Read Time: 13 ms
+Brute Force Time: 0 ms
+Map Time: 1 ms
+Group Time: 0 ms
+Reduce Time: 0 ms
+Distributed Map Time: 0 ms
+Distributed Group Time: 0 ms
+Distributed Reduce Time: 0 ms
+Distributed Total Time: 1 ms
+Total Execution Time: 19 ms
+------------------------------
+File Read Time: 349 ms
+Brute Force Time: 445 ms
+Map Time: 1492 ms
+Group Time: 366 ms
+Reduce Time: 174 ms
+Distributed Map Time: 1082 ms
+Distributed Group Time: 144 ms
+Distributed Reduce Time: 3275 ms
+Distributed Total Time: 4502 ms
+Total Execution Time: 10960 ms
+------------------------------
+File Read Time: 17 ms
+Brute Force Time: 0 ms
+Map Time: 1 ms
+Group Time: 0 ms
+Reduce Time: 0 ms
+Distributed Map Time: 1 ms
+Distributed Group Time: 0 ms
+Distributed Reduce Time: 1 ms
+Distributed Total Time: 2 ms
+Total Execution Time: 24 ms
+------------------------------
+File Read Time: 354 ms
+Brute Force Time: 604 ms
+Map Time: 1809 ms
+Group Time: 283 ms
+Reduce Time: 156 ms
+Distributed Map Time: 1859 ms
+Distributed Group Time: 171 ms
+Distributed Reduce Time: 3453 ms
+Distributed Total Time: 5498 ms
+Total Execution Time: 11995 ms
+------------------------------
+File Read Time: 14 ms
+Brute Force Time: 0 ms
+Map Time: 1 ms
+Group Time: 0 ms
+Reduce Time: 0 ms
+Distributed Map Time: 1 ms
+Distributed Group Time: 0 ms
+Distributed Reduce Time: 1 ms
+Distributed Total Time: 2 ms
+Total Execution Time: 20 ms
+------------------------------
