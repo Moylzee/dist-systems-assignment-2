@@ -1,0 +1,11 @@
+File Read Time: 326 ms
+Brute Force Time: 471 ms
+Map Time: 434 ms
+Group Time: 198 ms
+Reduce Time: 110 ms
+Distributed Map Time: 131 ms
+Distributed Group Time: 134 ms
+Distributed Reduce Time: 5982 ms
+Distributed Total Time: 6249 ms
+Total Execution Time: 12389 ms
+------------------------------
