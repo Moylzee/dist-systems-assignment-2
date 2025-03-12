@@ -16,14 +16,15 @@ public class MapReduceFiles {
 
     if (args.length < 3) {
       System.err.println("usage: java MapReduceFiles file1.txt file2.txt file3.txt");
-
+      return; // Return to Prevent Errors 
     }
 
     Map<String, String> input = new HashMap<String, String>();
     try {
-      input.put(args[0], readFile(args[0]));
-      input.put(args[1], readFile(args[1]));
-      input.put(args[2], readFile(args[2]));
+      // Loops through the args (Files) and reads them into the input map
+      for (String file : args) {
+        input.put(file, readFile(file));
+      }
     }
     catch (IOException ex)
     {
@@ -209,7 +210,6 @@ public class MapReduceFiles {
           throw new RuntimeException(e);
         }
       }
-
       System.out.println(output);
     }
   }
