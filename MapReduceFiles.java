@@ -7,23 +7,31 @@ import java.util.Map;
 import java.io.IOException;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.util.Scanner;
 
 public class MapReduceFiles {
 
   public static void main(String[] args) {
+    long TotalStartTime = System.currentTimeMillis();
+    List<String> timings = new ArrayList<>();
 
     if (args.length < 3) {
       System.err.println("usage: java MapReduceFiles file1.txt file2.txt file3.txt");
-
+      return; // Return to Prevent Errors 
     }
 
     Map<String, String> input = new HashMap<String, String>();
     try {
-      input.put(args[0], readFile(args[0]));
-      input.put(args[1], readFile(args[1]));
-      input.put(args[2], readFile(args[2]));
+      long fileReadStart = System.currentTimeMillis();
+      // Loops through the args (Files) and reads them into the input map
+      for (String file : args) {
+        input.put(file, readFile(file));
+      }
+      long fileReadEnd = System.currentTimeMillis();
+      timings.add("File Read Time: " + (fileReadEnd - fileReadStart) + " ms");
     }
     catch (IOException ex)
     {
@@ -34,6 +42,7 @@ public class MapReduceFiles {
 
     // APPROACH #1: Brute force
     {
+      long bruteForceStart = System.currentTimeMillis();
       Map<String, Map<String, Integer>> output = new HashMap<String, Map<String, Integer>>();
 
       Iterator<Map.Entry<String, String>> inputIter = input.entrySet().iterator();
@@ -60,7 +69,8 @@ public class MapReduceFiles {
           }
         }
       }
-
+      long bruteForceEnd = System.currentTimeMillis();
+      timings.add("Brute Force Time: " + (bruteForceEnd - bruteForceStart) + " ms");
       // show me:
       System.out.println(output);
     }
@@ -68,10 +78,11 @@ public class MapReduceFiles {
 
     // APPROACH #2: MapReduce
     {
+      long mapReduceStart = System.currentTimeMillis();
       Map<String, Map<String, Integer>> output = new HashMap<String, Map<String, Integer>>();
 
       // MAP:
-
+      long mapStart = System.currentTimeMillis();
       List<MappedItem> mappedItems = new LinkedList<MappedItem>();
 
       Iterator<Map.Entry<String, String>> inputIter = input.entrySet().iterator();
@@ -82,9 +93,11 @@ public class MapReduceFiles {
 
         map(file, contents, mappedItems);
       }
+      long mapEnd = System.currentTimeMillis();
+      timings.add("Map Time: " + (mapEnd - mapStart) + " ms");
 
       // GROUP:
-
+      long groupStart = System.currentTimeMillis();
       Map<String, List<String>> groupedItems = new HashMap<String, List<String>>();
 
       Iterator<MappedItem> mappedIter = mappedItems.iterator();
@@ -99,8 +112,12 @@ public class MapReduceFiles {
         }
         list.add(file);
       }
+      long groupEnd = System.currentTimeMillis();
+      timings.add("Group Time: " + (groupEnd - groupStart) + " ms");
 
       // REDUCE:
+
+      long reduceStart = System.currentTimeMillis();
 
       Iterator<Map.Entry<String, List<String>>> groupedIter = groupedItems.entrySet().iterator();
       while(groupedIter.hasNext()) {
@@ -111,15 +128,21 @@ public class MapReduceFiles {
         reduce(word, list, output);
       }
 
+      long reduceEnd = System.currentTimeMillis();
+      timings.add("Reduce Time: " + (reduceEnd - reduceStart) + " ms");
+
       System.out.println(output);
     }
 
 
     // APPROACH #3: Distributed MapReduce
     {
+      long distributedStart = System.currentTimeMillis();
       final Map<String, Map<String, Integer>> output = new HashMap<String, Map<String, Integer>>();
 
       // MAP:
+
+      long distributedMapStart = System.currentTimeMillis();
 
       final List<MappedItem> mappedItems = new LinkedList<MappedItem>();
 
@@ -156,9 +179,12 @@ public class MapReduceFiles {
           throw new RuntimeException(e);
         }
       }
+      long distributedMapEnd = System.currentTimeMillis();
+      timings.add("Distributed Map Time: " + (distributedMapEnd - distributedMapStart) + " ms");
 
       // GROUP:
 
+      long distributedGroupStart = System.currentTimeMillis();
       Map<String, List<String>> groupedItems = new HashMap<String, List<String>>();
 
       Iterator<MappedItem> mappedIter = mappedItems.iterator();
@@ -174,7 +200,12 @@ public class MapReduceFiles {
         list.add(file);
       }
 
+      long distributedGroupEnd = System.currentTimeMillis();
+      timings.add("Distributed Group Time: " + (distributedGroupEnd - distributedGroupStart) + " ms");
+
       // REDUCE:
+
+      long distributedReduceStart = System.currentTimeMillis();
 
       final ReduceCallback<String, String, Integer> reduceCallback = new ReduceCallback<String, String, Integer>() {
         @Override
@@ -210,14 +241,28 @@ public class MapReduceFiles {
         }
       }
 
+      long distributedReduceEnd = System.currentTimeMillis();
+      timings.add("Distributed Reduce Time: " + (distributedReduceEnd - distributedReduceStart) + " ms");
+
+      long distributedEnd = System.currentTimeMillis();
+      timings.add("Distributed Total Time: " + (distributedEnd - distributedStart) + " ms");
       System.out.println(output);
+
+      long totalEndTime = System.currentTimeMillis();
+      timings.add("Total Execution Time: " + (totalEndTime - TotalStartTime) + " ms");
+
+      writeTimesToFile(timings);
     }
   }
 
   public static void map(String file, String contents, List<MappedItem> mappedItems) {
     String[] words = contents.trim().split("\\s+");
     for(String word: words) {
-      mappedItems.add(new MappedItem(word, file));
+      // Remove punctuation and non-text symbols
+      String cleanedWord = word.replaceAll("[^a-zA-Z]", "");
+      if (!cleanedWord.isEmpty()) {
+        mappedItems.add(new MappedItem(cleanedWord, file));
+      }
     }
   }
 
@@ -243,7 +288,11 @@ public class MapReduceFiles {
     String[] words = contents.trim().split("\\s+");
     List<MappedItem> results = new ArrayList<MappedItem>(words.length);
     for(String word: words) {
-      results.add(new MappedItem(word, file));
+      // Remove punctuation and non-text symbols
+      String cleanedWord = word.replaceAll("[^a-zA-Z]", "");
+      if (!cleanedWord.isEmpty()) {
+        results.add(new MappedItem(cleanedWord, file));
+      }
     }
     callback.mapDone(file, results);
   }
@@ -308,7 +357,20 @@ public class MapReduceFiles {
     } finally {
       scanner.close();
     }
-  }
+  } 
+
+  private static void writeTimesToFile(List<String> timings) {
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter("times_taken.txt", true))) {
+        for (String time : timings) {
+            writer.write(time);
+            writer.newLine();
+        }
+        writer.write("------------------------------");
+        writer.newLine();
+    } catch (IOException e) {
+        System.err.println("Error writing execution times: " + e.getMessage());
+    }
+}
 
 }
 
