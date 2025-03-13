@@ -1,11 +1,6 @@
 # dist-systems-assignment-2
 Brian Moyles - 21333461
-Dave Szczesny - 
-
-# DAVE IT IS 3AM WTF I AM DOING HAHA
-# THIS IS MY PROGRESS SO FAR
-# QUESTION FOR U - FOR PART 4, SHOULD WE ALLOW NUMBERS AND STUFF ?
-# I FUCKING HATE REGEX 
+Dave Szczesny - 21300293
 
 # Part 1 - Proof It cant Read in multiple files 
 - Added a Test Variable to track the number of args
