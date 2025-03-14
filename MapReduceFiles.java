@@ -281,25 +281,12 @@ public class MapReduceFiles {
           Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-              Map<String, Map<String, Integer>> localOutput = new HashMap<>();
               for (String word : batchWords) {
-                List<String> files = groupedItems.get(word);
-                reduce(word, files, localOutput);
-              }
-              synchronized (output) {
-                for (Map.Entry<String, Map<String, Integer>> entry : localOutput.entrySet()) {
-                  output.put(entry.getKey(), entry.getValue());
-                }
+                reduce(word, list, reduceCallback);
               }
             }
           });
-        
-        // Thread t = new Thread(new Runnable() {
-        //   @Override
-        //   public void run() {
-        //     reduce(word, list, reduceCallback);
-        //   }
-        // });
+
           reduceCluster.add(t);
           t.start();
 

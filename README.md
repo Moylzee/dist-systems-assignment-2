@@ -2,6 +2,20 @@
 Brian Moyles - 21333461
 Dave Szczesny - 21300293
 
+# How to run build
+Run the following comman to build the java project
+```sh
+sh build.sh
+```
+
+To then run the java program run the following command
+```sh
+sh run.sh text1.txt text2.txt text3.txt
+```
+
+text.txt are the text files to be used in the program. Please note that 3 must be provided.
+
+
 # Part 1 - Proof It cant Read in multiple files 
 - Added a Test Variable to track the number of args
 ```
