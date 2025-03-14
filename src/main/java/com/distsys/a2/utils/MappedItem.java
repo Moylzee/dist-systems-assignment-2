@@ -1,4 +1,4 @@
-package a2.utils;
+package com.distsys.a2.utils;
 
 public class MappedItem {
 

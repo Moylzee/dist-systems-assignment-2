@@ -1,4 +1,4 @@
-package a2.approach;
+package com.distsys.a2.approach;
 
 import java.util.HashMap;
 import java.util.Iterator;

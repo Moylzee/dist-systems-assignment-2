@@ -1,4 +1,4 @@
-package a2.callback;
+package com.distsys.a2.callback;
 
 import java.util.List;
 

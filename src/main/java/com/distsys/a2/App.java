@@ -1,4 +1,4 @@
-package a2;
+package com.distsys.a2;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -6,10 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import a2.approach.BruteForce;
-import a2.approach.DistributedMapReduce;
-import a2.approach.MapReduce;
-import a2.utils.Common;
+import com.distsys.a2.approach.BruteForce;
+import com.distsys.a2.approach.DistributedMapReduce;
+import com.distsys.a2.approach.MapReduce;
+import com.distsys.a2.utils.Common;
 
 public class App {
     
@@ -47,12 +47,16 @@ public class App {
         // APPROACH #2: MapReduce
         String[] mapReduceTime = MapReduce.MapReduceMethod(input);
         for (String time : mapReduceTime) {
+            System.out.println(time);
             timings.add(time);
         }
+
+        System.out.println("-------");
 
         // APPROACH #3: Distributed MapReduce
         String[] distributedMapReduceTime = DistributedMapReduce.DistributedMapReduceMethod(input);
         for (String time : distributedMapReduceTime) {
+            System.out.println(time);
             timings.add(time);
         }
 

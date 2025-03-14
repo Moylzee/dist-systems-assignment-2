@@ -1,4 +1,4 @@
-package a2.approach;
+package com.distsys.a2.approach;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -6,12 +6,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import a2.utils.MappedItem;
-import a2.utils.MapReduceUtils;
+import com.distsys.a2.utils.MappedItem;
+import com.distsys.a2.utils.MapReduceUtils;
 
 public class MapReduce {
     public static String[] MapReduceMethod(Map<String, String> input) {
 
+        long totalStartTime = System.currentTimeMillis();
         Map<String, Map<String, Integer>> output = new HashMap<>();
         
         // Map
@@ -31,10 +32,11 @@ public class MapReduce {
         reducePhase(groupedItems, output);
         long reduceEnd = System.currentTimeMillis();
         String reduceTime = "Reduce Time: " + (reduceEnd - reduceStart) + "ms";
+        
+        long totalEndTime = System.currentTimeMillis();
+        String totalTime = "Total Time: " + (totalEndTime - totalStartTime) + "ms";
 
-        System.out.println(output);
-
-        String[] times = {mapTime, groupTime, reduceTime};
+        String[] times = {mapTime, groupTime, reduceTime, totalTime};
         return times;
     }
 

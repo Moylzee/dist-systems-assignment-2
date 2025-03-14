@@ -1,17 +1,18 @@
-package a2.utils;
+package com.distsys.a2.utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import a2.callback.MapCallback;
-import a2.callback.ReduceCallback;
+import com.distsys.a2.callback.MapCallback;
+import com.distsys.a2.callback.ReduceCallback;
 
 public class MapReduceUtils {
     public static void map(String file, String contents, List<MappedItem> mappedItems) {
+
         String[] words = contents.trim().split("\\s+");
-        for(String word: words) {
+        for(String word : words) {
             // Remove punctuation and non-text symbols
             String cleanedWord = word.replaceAll("[^a-zA-Z]", "");
             if (!cleanedWord.isEmpty()) {
@@ -23,12 +24,12 @@ public class MapReduceUtils {
     public static void map(String file, String contents, MapCallback<String, MappedItem> callback) {
         String[] words = contents.trim().split("\\s+");
         List<MappedItem> results = new ArrayList<MappedItem>(words.length);
-        for(String word: words) {
+        for(String word : words) {
         // Remove punctuation and non-text symbols
-        String cleanedWord = word.replaceAll("[^a-zA-Z]", "");
-        if (!cleanedWord.isEmpty()) {
-            results.add(new MappedItem(cleanedWord, file));
-        }
+            String cleanedWord = word.replaceAll("[^a-zA-Z]", "");
+            if (!cleanedWord.isEmpty()) {
+                results.add(new MappedItem(cleanedWord, file));
+            }
         }
         callback.mapDone(file, results);
     }

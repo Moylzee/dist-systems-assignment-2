@@ -1,4 +1,4 @@
-package a2.approach;
+package com.distsys.a2.approach;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,10 +7,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import a2.callback.MapCallback;
-import a2.callback.ReduceCallback;
-import a2.utils.MapReduceUtils;
-import a2.utils.MappedItem;
+import com.distsys.a2.callback.MapCallback;
+import com.distsys.a2.callback.ReduceCallback;
+import com.distsys.a2.utils.MapReduceUtils;
+import com.distsys.a2.utils.MappedItem;
 
 public class DistributedMapReduce {
     public static String[] DistributedMapReduceMethod(Map<String, String> input) {
@@ -42,7 +42,7 @@ public class DistributedMapReduce {
         return times;
     }
 
-    private static List<MappedItem> mapPhase(Map<String, String> input) {
+    static List<MappedItem> mapPhase(Map<String, String> input) {
         final List<MappedItem> mappedItems = new LinkedList<>();
 
         final MapCallback<String, MappedItem> mapCallback = new MapCallback<>() {
@@ -68,7 +68,7 @@ public class DistributedMapReduce {
         return mappedItems;
     }
 
-    private static Map<String, List<String>> groupPhase(List<MappedItem> mappedItems) {
+    static Map<String, List<String>> groupPhase(List<MappedItem> mappedItems) {
         Map<String, List<String>> groupedItems = new HashMap<>();
         Iterator<MappedItem> mappedIter = mappedItems.iterator();
         while(mappedIter.hasNext()) {
@@ -83,10 +83,11 @@ public class DistributedMapReduce {
             }
             list.add(file);
         }
+
         return groupedItems;
     }
 
-    private static void reducePhase(Map<String, List<String>> groupedItems, Map<String, Map<String, Integer>> output) {
+    static void reducePhase(Map<String, List<String>> groupedItems, Map<String, Map<String, Integer>> output) {
         final ReduceCallback<String, String, Integer> reduceCallback = new ReduceCallback<>() {
             @Override
             public synchronized void reduceDone(String k, Map<String, Integer> v) {
@@ -109,7 +110,7 @@ public class DistributedMapReduce {
             wordsBatch.add(word);
 
             if(wordsBatch.size() >= batchSize || !groupedIter.hasNext()) {
-                createReduceThreads(wordsBatch, list, reduceCallback, reduceCluster);
+                createReduceThreads(new ArrayList<>(wordsBatch), list, reduceCallback, reduceCluster);
                 wordsBatch.clear();
             }
         }
@@ -148,8 +149,8 @@ public class DistributedMapReduce {
         while (start < splitLines.size()) {
             int end = Math.min(start + chunkSize, splitLines.size());
             final String[] chunk = new String[end - start];
-            final String chunkContent = String.join("\n", chunk);
             System.arraycopy(splitLines.toArray(), start, chunk, 0, end - start);
+            final String chunkContent = String.join("\n", chunk);
 
             Thread t = new Thread(new Runnable() {
                 @Override
@@ -159,6 +160,7 @@ public class DistributedMapReduce {
             });
 
             mapCluster.add(t);
+            t.start();
             start = end;
         }
     }
