@@ -13,13 +13,13 @@ import com.distsys.a2.utils.MapReduceUtils;
 import com.distsys.a2.utils.MappedItem;
 
 public class DistributedMapReduce {
-    public static String[] DistributedMapReduceMethod(Map<String, String> input) {
+    public static String[] DistributedMapReduceMethod(Map<String, String> input, int numMapThreads, int numReduceThreads) {
         long distributedStart = System.currentTimeMillis();
         final Map<String, Map<String, Integer>> output = new HashMap<>();
 
         // MAP
         long distributedMapStart = System.currentTimeMillis();
-        List<MappedItem> mappedItems = mapPhase(input);
+        List<MappedItem> mappedItems = mapPhase(input, numMapThreads);
         long distributedMapEnd = System.currentTimeMillis();
         String distributedMapTime = "Distributed Map Time: " + (distributedMapEnd - distributedMapStart) + "ms";
 
@@ -31,7 +31,7 @@ public class DistributedMapReduce {
 
         // REDUCE
         long distributedReduceStart = System.currentTimeMillis();
-        reducePhase(groupedItems, output);
+        reducePhase(groupedItems, output, numReduceThreads);
         long distributedReduceEnd = System.currentTimeMillis();
         String distributedReduceTime = "Distributed Reduce Time: " + (distributedReduceEnd - distributedReduceStart) + "ms";
 
@@ -42,7 +42,7 @@ public class DistributedMapReduce {
         return times;
     }
 
-    static List<MappedItem> mapPhase(Map<String, String> input) {
+    static List<MappedItem> mapPhase(Map<String, String> input, int numMapThreads) {
         final List<MappedItem> mappedItems = new LinkedList<>();
 
         final MapCallback<String, MappedItem> mapCallback = new MapCallback<>() {
@@ -60,7 +60,7 @@ public class DistributedMapReduce {
             final String contents = entry.getValue();
 
             List<String> splitLines = splitLines(contents);
-            int chunkSize = determineChunkSize(splitLines.size());
+            int chunkSize = (numMapThreads == 0 ) ? determineChunkSize(splitLines.size()) : numMapThreads;
             createMapThreads(file, splitLines, chunkSize, mapCallback, mapCluster);
         }
 
@@ -87,7 +87,7 @@ public class DistributedMapReduce {
         return groupedItems;
     }
 
-    static void reducePhase(Map<String, List<String>> groupedItems, Map<String, Map<String, Integer>> output) {
+    static void reducePhase(Map<String, List<String>> groupedItems, Map<String, Map<String, Integer>> output, int numReduceThreads) {
         final ReduceCallback<String, String, Integer> reduceCallback = new ReduceCallback<>() {
             @Override
             public synchronized void reduceDone(String k, Map<String, Integer> v) {
@@ -96,7 +96,7 @@ public class DistributedMapReduce {
         };
 
         // determine the batch size based on the total words
-        int batchSize = determineBatchSize(groupedItems.size());
+        int batchSize = (numReduceThreads == 0) ? determineBatchSize(groupedItems.size()) : numReduceThreads;
         List<Thread> reduceCluster = new ArrayList<>(groupedItems.size());
 
         // create batches of words to be processed by each reduce thread
@@ -123,12 +123,13 @@ public class DistributedMapReduce {
         String[] lines = contents.split("\n");
 
         // Split long lines (lines greater than 80 characters)
+        int characterSplitIndex = 70;
         List<String> splitLines = new ArrayList<>();
         for (String line : lines) {
-            while(line.length() > 80) {
-                int splitIndex = line.lastIndexOf(' ', 80);
+            while(line.length() > characterSplitIndex) {
+                int splitIndex = line.lastIndexOf(' ', characterSplitIndex);
                 if (splitIndex == -1) {
-                    splitIndex = 80;
+                    splitIndex = characterSplitIndex;
                 }
 
                 String part = line.substring(0, splitIndex);
@@ -192,12 +193,14 @@ public class DistributedMapReduce {
         int minChunkSize = 1_000;
         int maxChunkSize = 10_000;
         return Math.min(maxChunkSize, Math.max(minChunkSize, totalLines / 10));
+        // return 4000; optimal found value
     }
 
     private static int determineBatchSize(int totalWords) {
         int minBatchSize = 100;
         int maxBatchSize = 1_000;
         return Math.min(Math.max(minBatchSize, totalWords / 10), maxBatchSize);
+        // return 700; optimal found value
     }
 }
 
