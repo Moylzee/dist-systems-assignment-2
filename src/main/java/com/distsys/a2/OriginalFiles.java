@@ -1,3 +1,5 @@
+package com.distsys.a2;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,7 +14,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.util.Scanner;
 
-public class MapReduceFiles {
+public class OriginalFiles {
 
   public static void main(String[] args) {
     long TotalStartTime = System.currentTimeMillis();
@@ -20,7 +22,7 @@ public class MapReduceFiles {
 
     if (args.length < 3) {
       System.err.println("usage: java MapReduceFiles file1.txt file2.txt file3.txt");
-      return; // Return to Prevent Errors
+      return; // Return to Prevent Errors 
     }
 
     Map<String, String> input = new HashMap<String, String>();
@@ -116,6 +118,7 @@ public class MapReduceFiles {
       timings.add("Group Time: " + (groupEnd - groupStart) + " ms");
 
       // REDUCE:
+
       long reduceStart = System.currentTimeMillis();
 
       Iterator<Map.Entry<String, List<String>>> groupedIter = groupedItems.entrySet().iterator();
@@ -131,7 +134,10 @@ public class MapReduceFiles {
       timings.add("Reduce Time: " + (reduceEnd - reduceStart) + " ms");
 
       System.out.println(output);
+      long mapReduceEnd = System.currentTimeMillis();
+      timings.add("MapReduce Total Time: " + (mapReduceEnd - mapReduceStart) + " ms");
     }
+
 
 
     // APPROACH #3: Distributed MapReduce
@@ -140,6 +146,58 @@ public class MapReduceFiles {
       final Map<String, Map<String, Integer>> output = new HashMap<String, Map<String, Integer>>();
 
       // MAP:
+
+
+      List<Long> mapTimeTaken = new ArrayList<>();
+      for (int i = 0; i < 10; i++) {
+        long distributedMapStart = System.currentTimeMillis();
+
+      final List<MappedItem> mappedItems = new LinkedList<MappedItem>();
+
+      final MapCallback<String, MappedItem> mapCallback = new MapCallback<String, MappedItem>() {
+        @Override
+        public synchronized void mapDone(String file, List<MappedItem> results) {
+          mappedItems.addAll(results);
+        }
+      };
+
+      List<Thread> mapCluster = new ArrayList<Thread>(input.size());
+
+      Iterator<Map.Entry<String, String>> inputIter = input.entrySet().iterator();
+      while(inputIter.hasNext()) {
+        Map.Entry<String, String> entry = inputIter.next();
+        final String file = entry.getKey();
+        final String contents = entry.getValue();
+
+        Thread t = new Thread(new Runnable() {
+          @Override
+          public void run() {
+            map(file, contents, mapCallback);
+          }
+        });
+        mapCluster.add(t);
+        t.start();
+      }
+
+      // wait for mapping phase to be over:
+      for(Thread t : mapCluster) {
+        try {
+          t.join();
+        } catch(InterruptedException e) {
+          throw new RuntimeException(e);
+        }
+      }
+      long distributedMapEnd = System.currentTimeMillis();
+      mapTimeTaken.add(distributedMapEnd - distributedMapStart);
+      System.out.println("Distributed Map Time: " + (distributedMapEnd - distributedMapStart) + " ms");
+      }
+      long meanTimetaken = 0;
+      for(long time : mapTimeTaken) {
+        meanTimetaken += time;
+      }
+      meanTimetaken = meanTimetaken / mapTimeTaken.size();
+
+      System.out.println("Mean Distributed Map Time: " + meanTimetaken + " ms");
 
       long distributedMapStart = System.currentTimeMillis();
 
@@ -160,55 +218,14 @@ public class MapReduceFiles {
         final String file = entry.getKey();
         final String contents = entry.getValue();
 
-
-        String[] lines = contents.split("\n");
-
-        // Split long lines (lines greater than 80 characters)
-        List<String> splitLines = new ArrayList<>();
-        for (String line : lines) {
-          while (line.length() > 80) {
-            // find the next whitespace
-            int splitIndex = line.lastIndexOf(' ', 80);
-            if (splitIndex == -1){
-              splitIndex = 80; // force split if no whitespace
-            }
-
-            String part = line.substring(0, splitIndex);
-            splitLines.add(part);
-            line = line.substring(splitIndex).trim();
+        Thread t = new Thread(new Runnable() {
+          @Override
+          public void run() {
+            map(file, contents, mapCallback);
           }
-
-          if (!line.isEmpty()) {
-            splitLines.add(line);
-          }
-        }
-
-        // dynamically adjust chunk size based on total lines
-        int totalLines = splitLines.size();
-        int chunkSize = Math.min(10_000, Math.max(1_000, totalLines / 10));
-
-        int start = 0;
-
-        while (start < splitLines.size()) {
-          int end = Math.min(start + chunkSize, splitLines.size());
-          final String[] chunk = new String[end - start];
-          final String chunkContent = String.join("\n", chunk);
-          System.arraycopy(splitLines.toArray(), start, chunk, 0, end - start);
-
-          // create a thread for this chunk of lines
-          Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-              map(file, chunkContent, mapCallback);
-            }
-          });
-
-          mapCluster.add(t);
-          t.start();
-
-          start = end;
-        }
-        
+        });
+        mapCluster.add(t);
+        t.start();
       }
 
       // wait for mapping phase to be over:
@@ -247,7 +264,6 @@ public class MapReduceFiles {
 
       long distributedReduceStart = System.currentTimeMillis();
 
-
       final ReduceCallback<String, String, Integer> reduceCallback = new ReduceCallback<String, String, Integer>() {
         @Override
         public synchronized void reduceDone(String k, Map<String, Integer> v) {
@@ -255,42 +271,22 @@ public class MapReduceFiles {
         }
       };
 
-      // determine the batch size based on total words
-      int totalWords = groupedItems.size();
-      int minBatchSize = 100;
-      int maxBatchSize = 1000;
-      int batchSize = Math.min(Math.max(minBatchSize, totalWords / 10), maxBatchSize);
-
       List<Thread> reduceCluster = new ArrayList<Thread>(groupedItems.size());
 
-      // Create batches of words to be processed by each reduce thread
-      List<String> wordsBatch = new ArrayList<>();
       Iterator<Map.Entry<String, List<String>>> groupedIter = groupedItems.entrySet().iterator();
       while(groupedIter.hasNext()) {
         Map.Entry<String, List<String>> entry = groupedIter.next();
         final String word = entry.getKey();
         final List<String> list = entry.getValue();
 
-        // Add the word to the batch
-        wordsBatch.add(word);
-
-        if (wordsBatch.size() >= batchSize || !groupedIter.hasNext()) {
-          // create a new thread for processing this batch
-          List<String> batchWords = new ArrayList<>(wordsBatch);
-          Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-              for (String word : batchWords) {
-                reduce(word, list, reduceCallback);
-              }
-            }
-          });
-
-          reduceCluster.add(t);
-          t.start();
-
-          wordsBatch.clear();
-        }
+        Thread t = new Thread(new Runnable() {
+          @Override
+          public void run() {
+            reduce(word, list, reduceCallback);
+          }
+        });
+        reduceCluster.add(t);
+        t.start();
       }
 
       // wait for reducing phase to be over:
@@ -434,4 +430,3 @@ public class MapReduceFiles {
 }
 
 }
-

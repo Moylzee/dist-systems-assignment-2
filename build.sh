@@ -1,0 +1,3 @@
+echo Building Application...
+javac -d bin -sourcepath src src/main/java/com/distsys/a2/*.java src/main/java/com/distsys/a2/approach/*.java src/main/java/com/distsys/a2/utils/*.java src/main/java/com/distsys/a2/callback/*.java
+echo Build Complete.
